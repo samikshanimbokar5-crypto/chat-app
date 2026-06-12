@@ -14,47 +14,68 @@ const { initSocket } = require("./socket");
 
 const app = express();
 
+
 // Middleware
 app.use(
   cors({
-    origin:[
-      "http://localhost:5173"
+    origin: [
+      "http://localhost:5173",
+      "https://your-vercel-url.vercel.app"
     ],
-    credentials:true
+    credentials: true
   })
 );
+
+
 app.use(express.json());
+
 
 // Connect Database
 connectDB();
+
 
 // Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/messages", messageRoutes);
 app.use("/api/users", userRoutes);
 
+
 // Home Route
 app.get("/", (req, res) => {
+
   res.send("Server Running");
+
 });
+
 
 // Protected Route
 app.get("/api/protected", protect, (req, res) => {
+
   res.json({
+
     message: "Protected Route Accessed",
+
     user: req.user,
+
   });
+
 });
+
 
 // Create HTTP Server
 const server = http.createServer(app);
 
+
 // Initialize Socket.IO
 initSocket(server);
+
 
 // Start Server
 const PORT = process.env.PORT || 8000;
 
+
 server.listen(PORT, () => {
+
   console.log(`Server running on port ${PORT}`);
+
 });
