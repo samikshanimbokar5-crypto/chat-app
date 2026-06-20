@@ -17,23 +17,33 @@ const { initSocket } = require("./socket");
 const app = express();
 
 
-// CORS CONFIG
 app.use(
   cors({
-    origin: [
-      "http://localhost:5173",
-      "https://chat-app-qgkc.onrender.com"
-    ],
-    methods: [
-      "GET",
-      "POST",
-      "PUT",
-      "DELETE"
-    ],
-    credentials: true
+    origin: function(origin, callback){
+
+      const allowedOrigins = [
+        "http://localhost:5173",
+        "https://chat-app-qgkc.onrender.com"
+      ];
+
+
+      if(!origin || allowedOrigins.includes(origin)){
+
+        callback(null,true);
+
+      }
+      else{
+
+        callback(new Error("Not allowed by CORS"));
+
+      }
+
+    },
+
+    credentials:true
+
   })
 );
-
 
 app.use(express.json());
 
