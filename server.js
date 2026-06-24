@@ -17,93 +17,52 @@ const { initSocket } = require("./socket");
 const app = express();
 
 
-app.use(
-  cors({
-    origin: function(origin, callback){
+// CORS
+app.use(cors({
+    origin: "http://localhost:5173",
+    credentials: true
+}));
 
-      const allowedOrigins = [
-        "http://localhost:5173",
-        "https://chat-app-qgkc.onrender.com"
-      ];
-
-
-      if(!origin || allowedOrigins.includes(origin)){
-
-        callback(null,true);
-
-      }
-      else{
-
-        callback(new Error("Not allowed by CORS"));
-
-      }
-
-    },
-
-    credentials:true
-
-  })
-);
 
 app.use(express.json());
-
 
 
 // Database
 connectDB();
 
 
-
 // Routes
 
-app.use(
-  "/api/auth",
-  authRoutes
-);
+app.use("/api/auth", authRoutes);
 
+app.use("/api/messages", messageRoutes);
 
-app.use(
-  "/api/messages",
-  messageRoutes
-);
-
-
-app.use(
-  "/api/users",
-  userRoutes
-);
+app.use("/api/users", userRoutes);
 
 
 
 // Home Route
 
 app.get("/", (req,res)=>{
-
-  res.send("Server Running");
-
+    res.send("Server Running");
 });
-
 
 
 
 // Protected Route
 
 app.get(
-  "/api/protected",
-  protect,
-  (req,res)=>{
+    "/api/protected",
+    protect,
+    (req,res)=>{
 
-    res.json({
+        res.json({
+            message:"Protected Route Accessed",
+            user:req.user
+        });
 
-      message:"Protected Route Accessed",
-
-      user:req.user
-
-    });
-
-  }
+    }
 );
-
 
 
 
@@ -112,12 +71,9 @@ app.get(
 const server = http.createServer(app);
 
 
-
-
 // Socket.IO
 
 initSocket(server);
-
 
 
 
@@ -128,8 +84,8 @@ const PORT = process.env.PORT || 8000;
 
 server.listen(PORT,()=>{
 
-  console.log(
-    `Server running on port ${PORT}`
-  );
+    console.log(
+        `Server running on port ${PORT}`
+    );
 
 });
